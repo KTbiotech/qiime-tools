@@ -60,7 +60,7 @@ def filter_samples(df, exclude_ids=[], include_ids=[], contain_strings=[]):
 	#meta_cols = get_meta_cols(df)
 	#print (df.columns.to_list())
 
-	if len(exclude_ids) + len(include_ids) + len(contain_strings) == 0:
+	if (len(exclude_ids) + len(include_ids) + len(contain_strings) == 0 ) or exclude_ids +  include_ids == ["", ""]:
 		return df
 
 	if len(exclude_ids) > 0:
@@ -71,6 +71,8 @@ def filter_samples(df, exclude_ids=[], include_ids=[], contain_strings=[]):
 	df = df[df['index'].isin(include_ids)]
 
 	df = df.loc[:, (df != 0).any(axis=0)]
+
+	
 
 	return df
 
@@ -93,17 +95,18 @@ def beauty_feats(df):
 	return df
 	
 def filter_features(df, contain_strings=[], not_contain_strings=[]):
-	if len (contain_strings) + len(not_contain_strings) == 0 :
+	if len (contain_strings) + len(not_contain_strings) == 0  or contain_strings + not_contain_strings == ["", ""]:
 		return df
 
 	meta_cols = get_meta_cols(df)
 	feats_col = [ col for col in df.columns.to_list() if col not in meta_cols][1:]
 
 	remain_cols = []
+	
 
 	for feat in feats_col:
 		get_feat = False
-		if len(contain_strings) > 0:
+		if len(contain_strings) > 0 or contain_strings != [""]:
 			for string in contain_strings:
 				
 				if string not in feat:			
@@ -111,7 +114,7 @@ def filter_features(df, contain_strings=[], not_contain_strings=[]):
 				else:
 					get_feat = True
 
-		if len(not_contain_strings) > 0:
+		if len(not_contain_strings) > 0 or  not_contain_strings != [""]:
 			for string in not_contain_strings:
 				if string in feat:
 					get_feat = False
@@ -187,7 +190,7 @@ def read_params():
 	parser.add_argument('--s-exclude-id', dest='s_exclude_ids', default = "",
 	                    help='filtersamples which NOT matched with some ids')
 
-	parser.add_argument('--beauty_feats', dest='f_beauty_feats', 
+	parser.add_argument('--beauty-feats', dest='f_beauty_feats', 
 	                    help='Short name of features')
 	
 	args = parser.parse_args()
